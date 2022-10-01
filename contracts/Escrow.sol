@@ -16,7 +16,7 @@ contract Escrow is Ownable {
     
 
     address payable public contractor;
-    address public client;
+    address payable public client;
     address payable public admin;
 
     // address private contractor;
@@ -27,7 +27,7 @@ contract Escrow is Ownable {
 
     function deposit(address payable payee, address payable broker) public payable virtual onlyOwner {
         contractor = payee;
-        client=msg.sender;
+        client= payable(msg.sender);
         admin = broker;
         uint256 amount = msg.value;
         _deposits[payee] += amount;
@@ -39,7 +39,7 @@ contract Escrow is Ownable {
     bool private taskCompleted;
     bool private taskValidated;
     bool private adminResolution;
-    uint256 private adminDecision;
+    bool private adminPayContractor;
  
 //  event Withdrawn(address indexed payee, uint256 weiAmount);
 
@@ -52,60 +52,61 @@ contract Escrow is Ownable {
 
     //     emit Withdrawn(payee, payment);
     // }
+    
+    //setting up modifiers
 
-    function adminResolutionStatus(bool inputAdminResolution, uint256 inputAdminDecision) public virtual{
+    
+    function _checkAdmin() internal view virtual {
+        require(msg.sender == admin, "caller is not the admin");
+    }
+
+      modifier onlyAdmin() {
+        _checkAdmin();
+        _;
+    }
+
+    
+    function _checkContractor() internal view virtual {
+        require(msg.sender == contractor, "caller is not the contractor");
+    }
+
+      modifier onlyContractor() {
+        _checkContractor();
+        _;
+    }
+    //validation and withdraw functions
+
+    function adminResolutionStatus(bool inputAdminResolution, bool inputAdminDecision) public virtual onlyAdmin{
     adminResolution = inputAdminResolution;
-    adminDecision = inputAdminDecision;
+    adminPayContractor = inputAdminDecision;
+    testPayment();
     }
 
-    function taskValidationStatus(bool inputTaskValidated) public virtual{
-    taskValidated = inputTaskValidated;
-    }
-
-    function taskCompletionStatus(bool inputTaskCompleted) public virtual{
+    function taskCompletionStatus(bool inputTaskCompleted) public virtual onlyContractor {
     taskCompleted = inputTaskCompleted;
     }
 
-
-
-    function withdrawalAllowed() public view virtual returns (bool){
-        if(taskCompleted == true && taskValidated == true){
-            return true;
-        }
-        else if(adminResolution == true){return true;}
-        else {return false;}
+    function taskValidationStatus(bool inputTaskValidated) public virtual onlyOwner{
+    taskValidated = inputTaskValidated;
+    testPayment();
     }
-    
+
     function testPayment() public virtual{
-    uint256 contractBalance = address(this).balance;
-    uint256 adminPayment = (contractBalance * 2)/10; //admin fee to be added
-    uint256 balancePayment = contractBalance - adminPayment;
+    uint256 balancePayment = address(this).balance;
+    uint256 adminPayment = (balancePayment * 2)/10; //admin fee to be added
+    balancePayment -= adminPayment; //updates the contract balance value
 
 
-        if((taskCompleted == true && taskValidated == true)||(adminResolution == true && adminDecision == 1)){
+        if((taskCompleted == true && taskValidated == true)||(adminResolution == true && adminPayContractor == true)){
             contractor.sendValue(balancePayment);
             admin.sendValue(adminPayment);
         }
-        else if(adminResolution == true && adminDecision == 0){
-            // pay client
+        else if(adminResolution == true && adminPayContractor == false){
+            client.sendValue(balancePayment);
+            admin.sendValue(adminPayment);
+
             }
 
     }
-
-    // event Withdrawn(address indexed payee, uint256 weiAmount);
-    // function withdraw(address payable payee) public virtual onlyOwner {
-    //     uint256 payment = _deposits[payee];
-
-    //     _deposits[payee] = 0;
-
-    //     payee.sendValue(payment);
-
-    //     emit Withdrawn(payee, payment);
-    // }
-
-    // function withdraw(address payable payee) public virtual override {
-    //     require(withdrawalAllowed(payee), "ConditionalEscrow: payee is not allowed to withdraw");
-    //     super.withdraw(payee);
-    // }
 
 }

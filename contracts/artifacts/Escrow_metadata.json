@@ -64,9 +64,9 @@
 						"type": "bool"
 					},
 					{
-						"internalType": "uint256",
+						"internalType": "bool",
 						"name": "inputAdminDecision",
-						"type": "uint256"
+						"type": "bool"
 					}
 				],
 				"name": "adminResolutionStatus",
@@ -79,7 +79,7 @@
 				"name": "client",
 				"outputs": [
 					{
-						"internalType": "address",
+						"internalType": "address payable",
 						"name": "",
 						"type": "address"
 					}
@@ -183,19 +183,6 @@
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
-			},
-			{
-				"inputs": [],
-				"name": "withdrawalAllowed",
-				"outputs": [
-					{
-						"internalType": "bool",
-						"name": "",
-						"type": "bool"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
 			}
 		],
 		"devdoc": {
@@ -260,11 +247,11 @@
 			]
 		},
 		"contracts/Escrow.sol": {
-			"keccak256": "0x4c3ed0b666ff11dcc36f1bc45b1dfc2eaad064ea3436207aa1a274bc8ec0aa78",
+			"keccak256": "0xae1467fed9eccd514ba4a35e989b0ac7045b067180faf616ffd7e695c7ed591e",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://4650e856f9e81a09082d37f25c0bc6d697e7374e293934629ee37825bbddb706",
-				"dweb:/ipfs/QmbNBK5CA5n9dZJaqcLPugbR9hMM6Jzu1iXALm7dQz8pzQ"
+				"bzz-raw://0743c23b2bf390dae8f75a2a41c85938c3fda4852f8d2ad1daff08f514c19a6c",
+				"dweb:/ipfs/QmZ8t8Ksy1QUjYWJ6rPu3wjLEsMp18Dftg36cWLmmMudXx"
 			]
 		}
 	},
