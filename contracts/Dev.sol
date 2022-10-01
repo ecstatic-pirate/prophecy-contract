@@ -39,3 +39,34 @@ contract Escrow is Ownable {
     }
 
 }
+
+
+
+abstract contract ConditionalEscrow is Escrow {
+    /**
+     * @dev Returns whether an address is allowed to withdraw their funds. To be
+     * implemented by derived contracts.
+     * @param payee The destination address of the funds.
+     */
+    function withdrawalAllowed(address payee) public view virtual returns (bool);
+
+    function withdraw(address payable payee) public virtual override {
+        require(withdrawalAllowed(payee), "ConditionalEscrow: payee is not allowed to withdraw");
+        super.withdraw(payee);
+    }
+}
+
+
+//create a new view only function to view addresses{Optional, define addresses as public to access them directly}
+
+    function getContractorAddress() public view returns (address){
+        return contractor;
+    }
+
+       function getClientAddress() public view returns (address){
+        return client;
+    }
+
+       function getAdminAddress() public view returns (address){
+        return admin;
+    }
