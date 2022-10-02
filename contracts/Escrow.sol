@@ -7,56 +7,23 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/utils/Address.sol";
 
 contract Escrow is Ownable {
-    
-    // Deposit function
-    
+
     using Address for address payable;
 
-    event Deposited(address indexed payee, uint256 weiAmount);
-    
+    event Deposited(uint256 weiAmount);
+    event ContractorAdded(address indexed payee);
+    event AdminAdded(address indexed payee);
 
-    address payable public contractor;
-    address payable public client;
-    address payable public admin;
-
-    // address private contractor;
-    // address private client;
-    // address private admin;
+    address payable private contractor;
+    address payable private client;
+    address payable private admin;
 
     mapping(address => uint256) private _deposits;
 
-    function deposit(address payable payee, address payable broker) public payable virtual onlyOwner {
-        contractor = payee;
-        client= payable(msg.sender);
-        admin = broker;
-        uint256 amount = msg.value;
-        _deposits[payee] += amount;
-        emit Deposited(payee, amount);
-    }
+// Check Admin Function
+// Checks if a given address is the admin and only allows access to specific functions with the admin address
     
-    //validation function
-
-    bool private taskCompleted;
-    bool private taskValidated;
-    bool private adminResolution;
-    bool private adminPayContractor;
- 
-//  event Withdrawn(address indexed payee, uint256 weiAmount);
-
-    //   function withdraw(address payable payee) public virtual onlyOwner {
-    //     uint256 payment = _deposits[payee];
-
-    //     _deposits[payee] = 0;
-
-    //     payee.sendValue(payment);
-
-    //     emit Withdrawn(payee, payment);
-    // }
-    
-    //setting up modifiers
-
-    
-    function _checkAdmin() internal view virtual {
+    function _checkAdmin() internal view {
         require(msg.sender == admin, "caller is not the admin");
     }
 
@@ -65,8 +32,11 @@ contract Escrow is Ownable {
         _;
     }
 
-    
-    function _checkContractor() internal view virtual {
+// Check Contractor Function
+// Checks if a given address is the contractor and only allows access to specific functions with the contractor address
+
+
+    function _checkContractor() internal view {
         require(msg.sender == contractor, "caller is not the contractor");
     }
 
@@ -74,26 +44,85 @@ contract Escrow is Ownable {
         _checkContractor();
         _;
     }
-    //validation and withdraw functions
 
-    function adminResolutionStatus(bool inputAdminResolution, bool inputAdminDecision) public virtual onlyAdmin{
-    adminResolution = inputAdminResolution;
-    adminPayContractor = inputAdminDecision;
-    testPayment();
+
+ // Deposit function
+ // Client sends the slected money to the smart contract
+ // Can Only be called by the client. 
+
+    function deposit() public payable onlyOwner {
+        client= payable(msg.sender);
+        uint256 amount = msg.value;
+        emit Deposited(amount);
     }
 
-    function taskCompletionStatus(bool inputTaskCompleted) public virtual onlyContractor {
+// Add Contractor Wallet Address function
+// Client adds the wallet address of the contractor
+// Only the client can call the function
+    
+     function addContractor(address payable payee) public onlyOwner{
+        contractor = payee;
+        emit ContractorAdded(payee);
+    }
+
+// Add Admin Wallet Address function 
+//{OPTIONAL: BETTER TO HARDCODE THE ADDRESS TO PROTECT THE FUNCTION FROM BEING MISUESD AS ADMIN HAS THE POWER TO RESOLVE PAYMENTS}
+// Client adds the wallet address of the admin
+// Only the client can call the function   
+
+    function addAdmin(address payable payee) public {
+        admin = payee;
+        emit AdminAdded(payee);
+    }
+
+// Declaring status check variables
+// taskCompleted: True once the contractor marks the tasks as done
+// taskValidated: True once the client marks the tasks as validated
+// adminResolution: True when the admin needs to resolve the contract in case of a dispute
+// adminPayContractor: True when the admin decides to pay the contractor, false when the admin decides to pay the client
+
+    bool private taskCompleted;
+    bool private taskValidated;
+    bool private adminResolution;
+    bool private adminPayContractor;
+   
+// adminResolutionStatus Function
+// Takes adminResolution and adminPayContractor. And calls the withdrawPayment function.
+// The function can only be accessed by the admin address    
+
+    function adminResolutionStatus(bool inputAdminResolution, bool inputAdminDecision) public onlyAdmin{
+    adminResolution = inputAdminResolution;
+    adminPayContractor = inputAdminDecision;
+    withdrawPayment();
+    }
+
+// taskCompletionStatus Function
+// Takes taskCompleted status
+// If true, the contractor gets paid. If false, the client gets paid.
+// The function can only be accessed by the contractor address        
+
+    function taskCompletionStatus(bool inputTaskCompleted) public onlyContractor {
     taskCompleted = inputTaskCompleted;
     }
 
-    function taskValidationStatus(bool inputTaskValidated) public virtual onlyOwner{
+// taskValidationStatus Function
+// Takes taskValidation status and calls the withdrawPayment function.
+// If true, the contractor gets paid.
+// The function can only be accessed by the client address        
+
+    function taskValidationStatus(bool inputTaskValidated) public onlyOwner{
     taskValidated = inputTaskValidated;
-    testPayment();
+    withdrawPayment();
     }
 
-    function testPayment() public virtual{
+// withdrawPayment function
+// Settles payments based on conditions    
+// if taskCompleted is TRUE and taskValidate is TRUE or if adminResolution is TRUE and adminPayContractor is TRUE pays CONTRACTOR
+// else if adminResolution is TRUE and adminPayContractor is FALSE pays CLIENT
+
+    function withdrawPayment() private{
     uint256 balancePayment = address(this).balance;
-    uint256 adminPayment = (balancePayment * 2)/10; //admin fee to be added
+    uint256 adminPayment = (balancePayment * 2)/10; //admin fee to be added based on the real time crypto value. 
     balancePayment -= adminPayment; //updates the contract balance value
 
 
