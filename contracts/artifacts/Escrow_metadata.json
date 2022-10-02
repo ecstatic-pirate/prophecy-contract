@@ -11,7 +11,13 @@
 					{
 						"indexed": true,
 						"internalType": "address",
-						"name": "payee",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "adminAddress",
 						"type": "address"
 					}
 				],
@@ -23,8 +29,84 @@
 				"inputs": [
 					{
 						"indexed": true,
+						"internalType": "uint256",
+						"name": "adminPayment",
+						"type": "uint256"
+					}
+				],
+				"name": "AdminPaid",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
 						"internalType": "address",
-						"name": "payee",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "bool",
+						"name": "inputAdminResolution",
+						"type": "bool"
+					},
+					{
+						"indexed": true,
+						"internalType": "bool",
+						"name": "inputAdminDecision",
+						"type": "bool"
+					}
+				],
+				"name": "AdminResolutionDone",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "clientAddress",
+						"type": "address"
+					}
+				],
+				"name": "ClientAdded",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "balancePayment",
+						"type": "uint256"
+					}
+				],
+				"name": "ClientPaid",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "contractorAddress",
 						"type": "address"
 					}
 				],
@@ -34,6 +116,25 @@
 			{
 				"anonymous": false,
 				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "uint256",
+						"name": "balancePayment",
+						"type": "uint256"
+					}
+				],
+				"name": "ContractorPaid",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
 					{
 						"indexed": false,
 						"internalType": "uint256",
@@ -64,10 +165,48 @@
 				"type": "event"
 			},
 			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "bool",
+						"name": "inputTaskCompleted",
+						"type": "bool"
+					}
+				],
+				"name": "TaskCompleted",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "bool",
+						"name": "inputTaskValidated",
+						"type": "bool"
+					}
+				],
+				"name": "TaskValidated",
+				"type": "event"
+			},
+			{
 				"inputs": [
 					{
 						"internalType": "address payable",
-						"name": "payee",
+						"name": "adminAddress",
 						"type": "address"
 					}
 				],
@@ -80,7 +219,20 @@
 				"inputs": [
 					{
 						"internalType": "address payable",
-						"name": "payee",
+						"name": "clientAddress",
+						"type": "address"
+					}
+				],
+				"name": "addClient",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address payable",
+						"name": "contractorAddress",
 						"type": "address"
 					}
 				],
@@ -236,11 +388,11 @@
 			]
 		},
 		"contracts/Escrow.sol": {
-			"keccak256": "0x46ebeff02d3c5ce3b45f76c7f9126355617e4a73e2556ed8ad4924dfdaa02ecc",
+			"keccak256": "0xb14c5574acc96ab3accde1ff12997e9893ca218d1c9305b614d2c51777a23d9b",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://5a07c41a3d6774f5a37ddcda0b37887418a623e641732aa823e11c75b5cc6ba7",
-				"dweb:/ipfs/QmQ7QuyPMgwe2D5v5uPS31KfHuwo9B8hKULBPWQUnkSMcg"
+				"bzz-raw://bf18086f233df291df57823cdfdddf54bbb71296259b13c1f8415c3915a40465",
+				"dweb:/ipfs/QmTLDUbsfodWnbYdwVs8CCRLWrwKBgC3tMUJ88jKBpgNTd"
 			]
 		}
 	},
