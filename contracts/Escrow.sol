@@ -26,7 +26,8 @@ contract Escrow is Ownable {
     address payable private admin;
 
 // Activate hardcoded address later
-    // address constant private admin = payable(0xCA35b7d915458EF540aDe6068dFe2F44E8fa733c);
+    // address constant private admin = payable(ADDRESS_HERE);
+
 
     mapping(address => uint256) private _deposits;
 
